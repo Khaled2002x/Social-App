@@ -8,6 +8,7 @@ import About from "./Pages/About";
 import Authlayout from "./Pages/Auth/authlayout";
 import Signin from "./Pages/Auth/signin";
 import SignUp from "./Pages/Auth/signup";
+import "@fortawesome/free-brands-svg-icons";
 const routes = createBrowserRouter([
   {
     path: "",

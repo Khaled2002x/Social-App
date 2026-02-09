@@ -4,8 +4,12 @@ import { createContext } from "react";
 export const Context = createContext();
 
 export default function ContextProvider({ children }) {
-  const [count, setCount] = useState(20);
+  const [count, setcount] = useState(10);
   return (
-    <Context.Provider value={{ count, setCount }}>{children}</Context.Provider>
+    <>
+      <Context.Provider value={{ count, setcount }}>
+        {children}
+      </Context.Provider>
+    </>
   );
 }
