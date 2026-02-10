@@ -6,7 +6,10 @@ import { loginSchema } from "../../zod-validation";
 import axios from "axios";
 import { Alert } from "@heroui/alert";
 import { Button } from "@heroui/react";
+import { replace, useNavigate } from "react-router-dom";
+
 export default function signin() {
+  const Navigate = useNavigate();
   const [sucess, setsucsess] = useState(false);
   const [faildata, setfail] = useState(false);
   const [loading, setloading] = useState(false);
@@ -25,9 +28,12 @@ export default function signin() {
         "https://linked-posts.routemisr.com/users/signin",
         dataform,
       );
+      localStorage.setItem("token", data.token);
+
       setloading(false);
       setsucsess(true);
       console.log(data);
+      Navigate("/home", replace("/"));
     } catch (error) {
       setfail(true);
       setsucsess(false);
