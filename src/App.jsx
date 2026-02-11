@@ -9,13 +9,18 @@ import Authlayout from "./Pages/Auth/authlayout";
 import Signin from "./Pages/Auth/signin";
 import SignUp from "./Pages/Auth/signup";
 import "@fortawesome/free-brands-svg-icons";
+import ProtectedRout from "./Pages/ProtectedRoute";
 const routes = createBrowserRouter([
   {
     path: "",
-    element: <Layout />,
+    element: (
+      <ProtectedRout>
+        <Layout />
+      </ProtectedRout>
+    ),
     children: [
       {
-        index: true,
+        path: "home",
         element: <Home />,
       },
       {

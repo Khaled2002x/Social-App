@@ -12,9 +12,10 @@ import { Button } from "@heroui/react";
 import HeroAuth from "./heroAuth";
 import { Context } from "../../Context";
 import { useContext } from "react";
+import { Link } from "react-router-dom";
 
 export default function signup() {
-  const { count, setcount } = useContext(Context);
+  const { count, token, setcount } = useContext(Context);
   const [sucess, setsucsess] = useState(false);
   const [faildata, setfail] = useState(false);
   const [loading, setloading] = useState(false);
@@ -67,6 +68,8 @@ export default function signup() {
   });
   async function handelsignup(dataForm) {
     try {
+      console.log(token);
+
       setloading(true);
       const { data } = await axios.post(
         "https://linked-posts.routemisr.com/users/signup",
@@ -94,7 +97,7 @@ export default function signup() {
         <div className="sm:w-full sm:h-1/2 md:w-1/2 md:h-full flex items-center">
           <form
             onSubmit={handleSubmit(handelsignup)}
-            className="p-5 m-auto shadow-2xl w-full md:w-3/4 rounded-2xl"
+            className="p-5 m-auto shadow-2xl w-full md:w-3/4 rounded-2xl bg-white/50"
           >
             {faildata && (
               <Alert className="bg-danger text-white text-sm sm:text-base">
@@ -110,6 +113,11 @@ export default function signup() {
             <div className="text-3xl sm:text-4xl md:text-5xl text-center mb-6">
               Sign Up
             </div>
+            <Link to={"/auth/signin"}>
+              <p className="text-center">
+                Already have an account? <span className="link">Sign in</span>
+              </p>
+            </Link>
 
             <div className="flex flex-col gap-4">
               <Input label="name" {...register("name")} variant="underlined" />
