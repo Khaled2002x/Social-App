@@ -9,12 +9,15 @@ import { Button } from "@heroui/react";
 import { Link, replace, useNavigate } from "react-router-dom";
 import HeroAuth from "./heroAuth";
 import Navbarjsx from "../../Components/layout/navbar";
+import { Context } from "../../Context";
+import { useContext } from "react";
 
 export default function signin() {
   const Navigate = useNavigate();
   const [sucess, setsucsess] = useState(false);
   const [faildata, setfail] = useState(false);
   const [loading, setloading] = useState(false);
+  const { SetToken } = useContext(Context);
   const {
     register,
     handleSubmit,
@@ -31,11 +34,11 @@ export default function signin() {
         dataform,
       );
       localStorage.setItem("token", data.token);
-
+      SetToken(data.token);
       setloading(false);
       setsucsess(true);
       console.log(data);
-      Navigate("/home", replace("/"));
+      Navigate("/", replace("/"));
     } catch (error) {
       setfail(true);
       setsucsess(false);

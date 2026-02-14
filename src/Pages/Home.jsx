@@ -1,16 +1,14 @@
 import React, { useContext } from "react";
 import { Context } from "../Context.jsx";
+import Post from "../Components/post/post.jsx";
 
 export default function Home() {
-  const { count, setCount } = useContext(Context);
+  const { count, setCount, token } = useContext(Context);
   console.log(count);
 
   return (
     <>
-      <div className="text-white">Home: {count}</div>;
-      <button className="bg-blue-500 " onClick={() => setCount(4)}>
-        Change Count
-      </button>
+      <Post />
     </>
   );
 }

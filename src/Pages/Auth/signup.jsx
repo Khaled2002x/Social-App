@@ -12,13 +12,14 @@ import { Button } from "@heroui/react";
 import HeroAuth from "./heroAuth";
 import { Context } from "../../Context";
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, replace, useNavigate } from "react-router-dom";
 
 export default function signup() {
   const { count, token, setcount } = useContext(Context);
   const [sucess, setsucsess] = useState(false);
   const [faildata, setfail] = useState(false);
   const [loading, setloading] = useState(false);
+  const navtologin = useNavigate();
   const signupschema = z
     .object({
       name: z
@@ -32,7 +33,11 @@ export default function signup() {
       password: z
         .string()
         .nonempty("please enter password")
-        .min(10, "enter at least 10 string"),
+
+        .regex(
+          /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
+          "Password must be at least 8 characters and include uppercase, lowercase, number and special character",
+        ),
       rePassword: z.string().nonempty("please re enter password"),
       gender: z.string().nonempty("please choose your gender"),
       dateOfBirth: z
@@ -68,8 +73,6 @@ export default function signup() {
   });
   async function handelsignup(dataForm) {
     try {
-      console.log(token);
-
       setloading(true);
       const { data } = await axios.post(
         "https://linked-posts.routemisr.com/users/signup",
@@ -79,12 +82,13 @@ export default function signup() {
       setfail(false);
       setsucsess(true);
       setloading(false);
+      navtologin("/auth/signin", replace);
       console.log(data);
     } catch (error) {
       setfail(true);
       setsucsess(false);
       setloading(false);
-      console.log(error);
+      console.log(error.data.message);
     }
   }
 
@@ -97,7 +101,7 @@ export default function signup() {
         <div className="sm:w-full sm:h-1/2 md:w-1/2 md:h-full flex items-center">
           <form
             onSubmit={handleSubmit(handelsignup)}
-            className="p-5 m-auto shadow-2xl w-full md:w-3/4 rounded-2xl bg-white/50"
+            className="p-5 m-auto shadow-2xl w-full md:w-4/5 rounded-2xl bg-white/50"
           >
             {faildata && (
               <Alert className="bg-danger text-white text-sm sm:text-base">
@@ -106,7 +110,7 @@ export default function signup() {
             )}
             {sucess && (
               <Alert className="bg-success text-white text-sm sm:text-base">
-                login successfuly
+                signup successfuly
               </Alert>
             )}
 
@@ -120,47 +124,60 @@ export default function signup() {
             </Link>
 
             <div className="flex flex-col gap-4">
-              <Input label="name" {...register("name")} variant="underlined" />
-              {errors.name && (
-                <p className="text-red-500 text-xs sm:text-sm">
-                  {errors.name.message}
-                </p>
-              )}
-
-              <Input
-                label="Email"
-                {...register("email")}
-                variant="underlined"
-              />
-              {errors.email && (
-                <p className="text-red-500 text-xs sm:text-sm">
-                  {errors.email.message}
-                </p>
-              )}
-
-              <Input
-                label="Password"
-                type="password"
-                {...register("password")}
-                variant="underlined"
-              />
-              {errors.password && (
-                <p className="text-red-500 text-xs sm:text-sm">
-                  {errors.password.message}
-                </p>
-              )}
-
-              <Input
-                label="rePassword"
-                type="password"
-                {...register("rePassword")}
-                variant="underlined"
-              />
-              {errors.rePassword && (
-                <p className="text-red-500 text-xs sm:text-sm">
-                  {errors.rePassword.message}
-                </p>
-              )}
+              <div className=" grid grid-cols-2 gap-8">
+                <div className="">
+                  <Input
+                    label="name"
+                    {...register("name")}
+                    variant="underlined"
+                  />
+                  {errors.name && (
+                    <p className="text-red-500 text-xs sm:text-sm">
+                      {errors.name.message}
+                    </p>
+                  )}
+                </div>
+                <div className="">
+                  <Input
+                    label="Email"
+                    {...register("email")}
+                    variant="underlined"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-xs sm:text-sm">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-8">
+                <div className="">
+                  <Input
+                    label="Password"
+                    type="password"
+                    {...register("password")}
+                    variant="underlined"
+                  />
+                  {errors.password && (
+                    <p className="text-red-500 text-xs sm:text-sm">
+                      {errors.password.message}
+                    </p>
+                  )}
+                </div>
+                <div className="">
+                  <Input
+                    label="rePassword"
+                    type="password"
+                    {...register("rePassword")}
+                    variant="underlined"
+                  />
+                  {errors.rePassword && (
+                    <p className="text-red-500 text-xs sm:text-sm">
+                      {errors.rePassword.message}
+                    </p>
+                  )}
+                </div>
+              </div>
 
               <Input
                 label="Birthdate"
@@ -168,6 +185,9 @@ export default function signup() {
                 {...register("dateOfBirth")}
                 variant="underlined"
               />
+              {errors.dateOfBirth && (
+                <p className="text-red-500">{errors.dateOfBirth.message}</p>
+              )}
 
               <Controller
                 name="gender"
@@ -179,7 +199,9 @@ export default function signup() {
                   </RadioGroup>
                 )}
               />
-
+              {errors.gender && (
+                <p className="text-red-500">{errors.gender.message}</p>
+              )}
               <Button
                 isLoading={loading}
                 type="submit"
