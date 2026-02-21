@@ -8,15 +8,11 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import src from "../../assets/alex-avatar-BLDJqiDr.png";
 
-import {
-  faHeart,
-  faMessage,
-  faStar,
-} from "@fortawesome/free-regular-svg-icons";
+import { faMessage, faStar } from "@fortawesome/free-regular-svg-icons";
 export default function HeroAuth() {
   return (
     <>
-      <section className="hero_login sm:w-full sm:h-1/2 md:w-1/2 md:h-full bg-blue-500 p-8">
+      <section className="hero_login sm:w-full  md:w-1/2 md:h-full bg-blue-500 p-8">
         <div className="hero_login_inner  ">
           {/* Upper */}
           <div className="upperSection flex items-center gap-4">

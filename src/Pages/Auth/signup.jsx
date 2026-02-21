@@ -60,6 +60,7 @@ export default function signup() {
       path: ["rePassword"],
     });
   let {
+    reset,
     register,
     handleSubmit,
     control,
@@ -75,12 +76,13 @@ export default function signup() {
     try {
       setloading(true);
       const { data } = await axios.post(
-        "https://linked-posts.routemisr.com/users/signup",
+        "https://route-posts.routemisr.com/users/signup",
         dataForm,
         { headers: { "Content-Type": "application/json" } },
       );
       setfail(false);
       setsucsess(true);
+      reset();
       setloading(false);
       navtologin("/auth/signin", replace);
       console.log(data);
@@ -98,7 +100,7 @@ export default function signup() {
         <HeroAuth />
 
         {/* FORM */}
-        <div className="sm:w-full sm:h-1/2 md:w-1/2 md:h-full flex items-center">
+        <div className="sm:w-full  md:w-1/2 md:h-full flex items-center">
           <form
             onSubmit={handleSubmit(handelsignup)}
             className="p-5 m-auto shadow-2xl w-full md:w-4/5 rounded-2xl bg-white/50"

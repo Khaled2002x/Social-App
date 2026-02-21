@@ -3,12 +3,12 @@ import React from "react";
 
 export default async function UserData() {
   const { data } = await axios.get(
-    "https://linked-posts.routemisr.com/users/profile-data",
+    "https://route-posts.routemisr.com/users/profile-data",
     {
       headers: {
-        token: localStorage.getItem("token"),
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     },
   );
-  return data.user;
+  return data.data;
 }

@@ -7,14 +7,14 @@ import Card from "./Card";
 export default function Post() {
   async function GetPost() {
     const { data } = await axios.get(
-      "https://linked-posts.routemisr.com/posts?limit=10",
+      "https://route-posts.routemisr.com/posts",
       {
         headers: {
-          token: localStorage.getItem("token"),
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       },
     );
-    return data.posts;
+    return data.data.posts;
   }
   const { data, isLoading } = useQuery({
     queryFn: GetPost,

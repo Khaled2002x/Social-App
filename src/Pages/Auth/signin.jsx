@@ -21,6 +21,7 @@ export default function signin() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(loginSchema),
@@ -30,14 +31,15 @@ export default function signin() {
     setfail(false);
     try {
       const { data } = await axios.post(
-        "https://linked-posts.routemisr.com/users/signin",
+        "https://route-posts.routemisr.com/users/signin",
         dataform,
       );
-      localStorage.setItem("token", data.token);
-      SetToken(data.token);
+      localStorage.setItem("token", data.data.token);
+      SetToken(data.data.token);
       setloading(false);
       setsucsess(true);
       console.log(data);
+      reset();
       Navigate("/", replace("/"));
     } catch (error) {
       setfail(true);
@@ -50,7 +52,7 @@ export default function signin() {
     <>
       <div className="main flex flex-col md:flex-row w-full gap-1 h-screen">
         <HeroAuth />
-        <div className=" sm:w-full sm:h-1/2 md:w-1/2 md:h-full flex items-center">
+        <div className=" sm:w-full  md:w-1/2 md:h-full flex items-center">
           <form
             onSubmit={handleSubmit(handellogin)}
             action=""

@@ -22,6 +22,7 @@ export default function Navbarjsx() {
     navigate("/auth/signin", replace);
   }
   const { User } = useContext(Context);
+
   const { data, isLoading } = User;
 
   return (
@@ -67,7 +68,7 @@ export default function Navbarjsx() {
             <DropdownItem key="profile" className="h-14 gap-2">
               <p className="font-semibold">Signed in as</p>
               <p className="font-semibold">
-                {isLoading ? <Loading /> : data.email}
+                {isLoading ? <Loading /> : data.user.email}
               </p>
             </DropdownItem>
 

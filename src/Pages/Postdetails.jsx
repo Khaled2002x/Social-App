@@ -8,14 +8,14 @@ export default function Postdetails() {
   const { id } = useParams();
   async function getpostdetails() {
     const { data } = await axios.get(
-      `https://linked-posts.routemisr.com/posts/${id}`,
+      `https://route-posts.routemisr.com/posts/${id}`,
       {
         headers: {
-          token: localStorage.getItem("token"),
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       },
     );
-    return [data.post];
+    return [data.data.post];
   }
   const { data, isLoading } = useQuery({
     queryFn: getpostdetails,
@@ -23,5 +23,5 @@ export default function Postdetails() {
   });
   if (isLoading) return <Loading />;
 
-  return <Card posts={data} />;
+  return <Card posts={data} details={true} />;
 }
