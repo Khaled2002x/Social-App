@@ -3,7 +3,17 @@ import Commet from "./Commet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Input } from "@heroui/react";
 import { IoSendSharp } from "react-icons/io5";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Button,
+} from "@heroui/react";
+
 import { MdInsertPhoto } from "react-icons/md";
+import src from "../../assets/images/user.jpeg";
 export default function Card({ posts, details = false }) {
   function GetFullYear(value) {
     const date = new Date(value);
@@ -23,7 +33,7 @@ export default function Card({ posts, details = false }) {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2">
                   <img
-                    src={post.user.photo}
+                    src={post?.user?.photo ? post.user.photo : src}
                     alt="User Avatar"
                     className="w-8 h-8 rounded-full"
                   />
@@ -36,6 +46,26 @@ export default function Card({ posts, details = false }) {
                     </p>
                   </div>
                 </div>
+
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button variant="bordered">
+                      <BsThreeDotsVertical />
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu aria-label="Static Actions">
+                    <DropdownItem key="new">New file</DropdownItem>
+                    <DropdownItem key="copy">Copy link</DropdownItem>
+                    <DropdownItem key="edit">Edit file</DropdownItem>
+                    <DropdownItem
+                      key="delete"
+                      className="text-danger"
+                      color="danger"
+                    >
+                      Delete file
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
               </div>
               {/* Message */}
               <div className="mb-4">
@@ -44,7 +74,7 @@ export default function Card({ posts, details = false }) {
               {/* Image */}
               <div className="mb-4">
                 <img
-                  src={post.image}
+                  src={post.image ? post.image : src}
                   alt="Post Image"
                   className="w-full h-48 object-cover rounded-md"
                 />

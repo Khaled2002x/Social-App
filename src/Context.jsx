@@ -7,7 +7,9 @@ export const Context = createContext();
 
 export default function ContextProvider({ children }) {
   const [count, setcount] = useState(10);
-  const [token, SetToken] = useState(null);
+  const [token, SetToken] = useState(() => {
+    return localStorage.getItem("token");
+  });
 
   const User = useQuery({
     queryFn: UserData,
