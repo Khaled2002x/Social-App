@@ -22,5 +22,5 @@ export default function Post() {
   });
 
   if (isLoading) return <Loading />;
-  return <Card posts={data} />;
+  return <Card posts={data} details={false} />;
 }

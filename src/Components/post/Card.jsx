@@ -54,16 +54,8 @@ export default function Card({ posts, details = false }) {
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu aria-label="Static Actions">
-                    <DropdownItem key="new">New file</DropdownItem>
-                    <DropdownItem key="copy">Copy link</DropdownItem>
-                    <DropdownItem key="edit">Edit file</DropdownItem>
-                    <DropdownItem
-                      key="delete"
-                      className="text-danger"
-                      color="danger"
-                    >
-                      Delete file
-                    </DropdownItem>
+                    <DropdownItem key="new">Update post</DropdownItem>
+                    <DropdownItem key="copy">Delete post</DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
               </div>
