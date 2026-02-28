@@ -21,7 +21,8 @@ export default function Postdetails() {
     queryFn: getpostdetails,
     queryKey: ["postId", id],
   });
-  if (isLoading) return <Loading />;
+
+  if (isLoading || !data) return <Loading />;
 
   return <Card posts={data} details={true} />;
 }
