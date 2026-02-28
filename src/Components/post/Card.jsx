@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Commet from "./Commet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Input } from "@heroui/react";
+import { Alert, Input, useDisclosure } from "@heroui/react";
 import { IoSendSharp } from "react-icons/io5";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import {
@@ -11,14 +11,24 @@ import {
   DropdownItem,
   Button,
 } from "@heroui/react";
-
+import useDeletePost from "./DeletePost";
 import { MdInsertPhoto } from "react-icons/md";
 import src from "../../assets/images/user.jpeg";
+import { useContext, useState } from "react";
+import { Context } from "../../Context";
+import UpdatePost from "./UpdatePost";
 export default function Card({ posts, details = false }) {
   function GetFullYear(value) {
     const date = new Date(value);
     return date.getFullYear();
   }
+  const { User } = useContext(Context);
+  const userId = User?.data?.user?.id;
+
+  console.log(userId);
+  const { mutate, data, isSuccess } = useDeletePost();
+  const [editPost, Seteditpost] = useState(null);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
     <>
@@ -26,14 +36,14 @@ export default function Card({ posts, details = false }) {
         {posts.map((post) => (
           <div
             key={post._id}
-            className="bg-gray-100 min-h-screen p-3 flex items-center justify-center"
+            className="bg-gray-100  p-3 flex items-center justify-center"
           >
             <div className="bg-white w-100 p-8 rounded-lg shadow-md max-w-md">
               {/* User Info with Three-Dot Menu */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2">
                   <img
-                    src={post?.user?.photo ? post.user.photo : src}
+                    src={src}
                     alt="User Avatar"
                     className="w-8 h-8 rounded-full"
                   />
@@ -42,22 +52,45 @@ export default function Card({ posts, details = false }) {
                       {post.user.name}
                     </p>
                     <p className="text-gray-500 text-sm">
-                      {GetFullYear(post.createdAt)}
+                      {post.createdAt.split("T")[0]}
                     </p>
                   </div>
                 </div>
-
-                <Dropdown>
-                  <DropdownTrigger>
-                    <Button variant="bordered">
-                      <BsThreeDotsVertical />
-                    </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu aria-label="Static Actions">
-                    <DropdownItem key="new">Update post</DropdownItem>
-                    <DropdownItem key="copy">Delete post</DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
+                {userId === post.user._id && (
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button>
+                        <BsThreeDotsVertical />
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu aria-label="Static Actions">
+                      <DropdownItem
+                        onClick={() => {
+                          Seteditpost(post);
+                          onOpen();
+                        }}
+                        key="new"
+                      >
+                        Update post
+                      </DropdownItem>
+                      <DropdownItem
+                        onClick={() => mutate({ postId: post._id })}
+                        className="text-red-400"
+                        key="delete"
+                      >
+                        Delete post
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                )}
+                {editPost && (
+                  <UpdatePost
+                    isOpen={isOpen}
+                    onOpen={onOpen}
+                    onOpenChange={onOpenChange}
+                    post={editPost}
+                  />
+                )}
               </div>
               {/* Message */}
               <div className="mb-4">
@@ -103,7 +136,11 @@ export default function Card({ posts, details = false }) {
               <div className="flex justify-between items-center">
                 <p className="text-gray-800 font-semibold">Comment</p>
                 <Link className="text-blue-400" to={`/post/${post._id}`}>
-                  {details ? "" : <p>view all comments</p>}
+                  {details || post.commentsCount == 0 ? (
+                    ""
+                  ) : (
+                    <p>view all comments</p>
+                  )}
                 </Link>
               </div>
 
@@ -119,6 +156,7 @@ export default function Card({ posts, details = false }) {
             </div>
           </div>
         ))}
+
         {/* component */}
       </div>
     </>

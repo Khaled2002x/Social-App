@@ -9,20 +9,13 @@ import {
   Avatar,
 } from "@heroui/react";
 import { useContext } from "react";
-import { NavLink, replace, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { Context } from "../../Context";
 import Loading from "../post/spinner";
+import { useLogout } from "../services/Logout";
 export default function Navbarjsx() {
-  const navigate = useNavigate();
-  const { SetToken } = useContext(Context);
-  function Logout() {
-    localStorage.removeItem("token");
-    SetToken(null);
-    console.log("khaled");
-    navigate("/auth/signin", replace);
-  }
   const { User } = useContext(Context);
-
+  const Logout = useLogout();
   const { data, isLoading } = User;
 
   return (
@@ -68,12 +61,21 @@ export default function Navbarjsx() {
             <DropdownItem key="profile" className="h-14 gap-2">
               <p className="font-semibold">Signed in as</p>
               <p className="font-semibold">
-                {isLoading ? <Loading /> : data.user.email}
+                {isLoading ? <Loading /> : data?.user?.email}
               </p>
             </DropdownItem>
 
-            <DropdownItem onClick={() => Logout()} key="logout" color="danger">
+            <DropdownItem onClick={Logout} key="logout" color="danger">
               Log Out
+            </DropdownItem>
+            <DropdownItem as={NavLink} to="/">
+              Home
+            </DropdownItem>
+            <DropdownItem as={NavLink} to="/Profile">
+              profile
+            </DropdownItem>
+            <DropdownItem as={NavLink} to="/changePassword">
+              change Password
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>

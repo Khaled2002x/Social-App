@@ -14,7 +14,8 @@ export default function ContextProvider({ children }) {
   const User = useQuery({
     queryFn: UserData,
     queryKey: ["user"],
-    enabled: !!localStorage.getItem("token"),
+    staleTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
   });
 
   return (

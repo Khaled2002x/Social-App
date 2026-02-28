@@ -5,7 +5,6 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  useDisclosure,
   Input,
 } from "@heroui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -13,25 +12,20 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdInsertPhoto } from "react-icons/md";
+import Loading from "./spinner";
 import { toast } from "react-toastify";
 
-export default function Modeladdcomment({ comment, postid }) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const Inputfile = useRef();
-  const [image, setimage] = useState(null);
-  const { register, setValue, reset, handleSubmit } = useForm({
+export default function UpdatePost({ post, isOpen, onOpenChange }) {
+  const { register, reset, setValue, handleSubmit } = useForm({
     defaultValues: {
-      content: "",
+      body: "",
     },
   });
-  function handelimage(e) {
-    console.log(e.target.files[0]);
-
-    setimage(e.target.files[0]);
-  }
-  async function Handelupdatecommentform(formdata) {
+  const InputFIle = useRef();
+  const [image, setimage] = useState(null);
+  async function sendata(formdata) {
     const { data } = await axios.put(
-      `https://route-posts.routemisr.com/posts/${postid}/comments/${comment._id}`,
+      `https://route-posts.routemisr.com/posts/${post._id}`,
       formdata,
       {
         headers: {
@@ -41,38 +35,46 @@ export default function Modeladdcomment({ comment, postid }) {
     );
     return data;
   }
-  const queryclient = useQueryClient();
-  const { mutate, isPending } = useMutation({
-    mutationFn: Handelupdatecommentform,
-    mutationKey: ["comment"],
+  const querClient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: sendata,
     onSuccess: (data) => {
+      toast.success(data.message);
       reset();
-      queryclient.invalidateQueries({
-        queryKey: ["comment"],
-      });
-      queryclient.invalidateQueries({
+
+      querClient.invalidateQueries({
         queryKey: ["post"],
       });
-      toast.success(data.message);
+      querClient.invalidateQueries({
+        queryKey: ["postId"],
+      });
+      querClient.invalidateQueries({
+        queryKey: ["userpost"],
+      });
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onError: (err) => {
+      toast.error(err.message);
     },
   });
-  function Update(dataform) {
+  function SubmitForm(data) {
     const formdata = new FormData();
-    formdata.append("content", dataform.content);
+    formdata.append("body", data.body);
     formdata.append("image", image);
     mutate(formdata);
   }
+
   useEffect(() => {
-    if (isOpen && comment) {
-      setValue("content", comment.content);
+    if (isOpen && post) {
+      setValue("body", post.body);
     }
-  }, [isOpen, comment, setValue]);
+  }, [isOpen, post, setValue]);
+  function HandelImage(e) {
+    console.log(e.target.files[0]);
+
+    setimage(e.target.files[0]);
+  }
   return (
     <>
-      <Button onPress={onOpen}>Update</Button>
       <Modal
         backdrop="opaque"
         classNames={{
@@ -86,23 +88,23 @@ export default function Modeladdcomment({ comment, postid }) {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Update comment
+                Update post
               </ModalHeader>
-              <form onSubmit={handleSubmit(Update)}>
+              <form onSubmit={handleSubmit(SubmitForm)}>
                 <ModalBody>
                   <Input
-                    {...register("content")}
+                    {...register("body")}
                     type="text"
                     placeholder="update your comment"
                   />
-                  <Button onClick={() => Inputfile.current.click()}>
+                  <Button onClick={() => InputFIle.current.click()}>
                     <MdInsertPhoto className="size-9" />
-                    Upload comment image
+                    Upload post image
                   </Button>
 
                   <Input
-                    ref={Inputfile}
-                    onChange={handelimage}
+                    onChange={HandelImage}
+                    ref={InputFIle}
                     hidden
                     className=" hidden"
                     type="file"
@@ -113,12 +115,7 @@ export default function Modeladdcomment({ comment, postid }) {
                   <Button color="danger" variant="light" onPress={onClose}>
                     Close
                   </Button>
-                  <Button
-                    isPending={isPending}
-                    type="submit"
-                    color="primary"
-                    onPress={onClose}
-                  >
+                  <Button type="submit" color="primary" onPress={onClose}>
                     update
                   </Button>
                 </ModalFooter>

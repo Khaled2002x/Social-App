@@ -9,11 +9,7 @@ export default function Commet({ post, details }) {
       {!details && post.topComment ? (
         <div className="flex items-center space-x-2">
           <img
-            src={
-              post.topComment?.commentCreator?.photo
-                ? post.topComment?.commentCreator?.photo
-                : src
-            }
+            src={src}
             alt={post.topComment?.commentCreator?.name}
             className="w-6 h-6 rounded-full"
           />

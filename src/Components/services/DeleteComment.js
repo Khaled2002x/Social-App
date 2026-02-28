@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 import axios from "axios";
 export const useDeleteComment = () => {
   const refquery = useQueryClient();
@@ -17,10 +18,23 @@ export const useDeleteComment = () => {
       console.log(typeof commentId, commentId.length);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       refquery.invalidateQueries({
         queryKey: ["comment"],
       });
+      refquery.invalidateQueries({
+        queryKey: ["post"],
+      });
+      refquery.invalidateQueries({
+        queryKey: ["postId"],
+      });
+      refquery.invalidateQueries({
+        queryKey: ["userpost"],
+      });
+      toast.success(data.message);
+    },
+    onError: (data) => {
+      toast.error(data.message);
     },
   });
 

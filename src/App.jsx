@@ -12,6 +12,10 @@ import "@fortawesome/free-brands-svg-icons";
 import ProtectedRout from "./Pages/ProtectedRoute";
 import ProtectedAuth from "./Pages/protectedAuth";
 import Postdetails from "./Pages/Postdetails";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Changepassword from "./Pages/changepassword.jsx";
+
 const routes = createBrowserRouter([
   {
     path: "",
@@ -32,6 +36,10 @@ const routes = createBrowserRouter([
       {
         path: "/Profile",
         element: <Profile />,
+      },
+      {
+        path: "/changePassword",
+        element: <Changepassword />,
       },
     ],
   },
@@ -54,7 +62,13 @@ const routes = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={routes} />;
+  return (
+    <>
+      {" "}
+      <RouterProvider router={routes} />;
+      <ToastContainer />
+    </>
+  );
 }
 
 export default App;

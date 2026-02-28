@@ -1,7 +1,39 @@
-import React from "react";
+import React, { useContext } from "react";
 import Addpost from "../Components/post/Addpost";
 
+import { Context } from "../Context";
+import Loading from "../Components/post/spinner";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import Card from "../Components/post/Card";
+import { useLogout } from "../Components/services/Logout";
 export default function Profile() {
+  const { User } = useContext(Context);
+  if (!User?.data?.user) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
+  }
+  const { _id, name, email, dateOfBirth, createdAt } = User.data.user;
+  async function Getuserpost() {
+    const { data } = await axios.get(
+      `https://route-posts.routemisr.com/users/${_id}/posts`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      },
+    );
+    return data;
+  }
+  const { data, isLoading } = useQuery({
+    queryFn: Getuserpost,
+    queryKey: ["userpost"],
+  });
+  const logout = useLogout();
+
   return (
     <div>
       {/* component */}
@@ -16,7 +48,7 @@ export default function Profile() {
             __html: "\n  .round {\n    border-radius: 50%;\n  }\n",
           }}
         />
-        <div className="w-full bg-indigo-100 h-screen flex flex-row flex-wrap justify-center ">
+        <div className="w-full bg-[#F3F4F6] h-screen flex flex-row flex-wrap justify-center ">
           {/* Begin Navbar */}
           <div className="bg-white shadow-lg border-t-4 border-indigo-500 absolute bottom-0 w-full md:w-0 md:hidden flex flex-row flex-wrap">
             <div className="w-full text-right">
@@ -25,29 +57,23 @@ export default function Profile() {
           </div>
           <div className="w-0 md:w-1/4 lg:w-1/5 h-0 md:h-screen overflow-y-hidden bg-white shadow-lg">
             <div className="p-5 bg-white sticky top-0">
-              <img
-                className="border border-indigo-100 shadow-lg round"
-                src="http://lilithaengineering.co.za/wp-content/uploads/2017/08/person-placeholder.jpg"
-              />
               <div className="pt-2 border-t mt-5 w-full text-center text-xl text-gray-600">
-                Some Person
+                Name : {name}
+              </div>
+              <div className="pt-2 border-t mt-5 w-full text-center text-xl text-gray-600">
+                date of birth : {dateOfBirth.split("T")[0]}
+              </div>
+              <div className="pt-2 border-t mt-5 w-full text-center text-xl text-gray-600">
+                email : {email}
+              </div>
+              <div className="pt-2 border-t mt-5 w-full text-center text-xl text-gray-600">
+                createdAt : {createdAt.split("T")[0]}
               </div>
             </div>
-            <div className="w-full h-screen antialiased flex flex-col hover:cursor-pointer">
-              <a
-                className="hover:bg-gray-300 bg-gray-200 border-t-2 p-3 w-full text-xl text-left text-gray-600 font-semibold"
-                href
-              >
-                <i className="fa fa-comment text-gray-600 text-2xl pr-1 pt-1 float-right" />
-                Messages
-              </a>
-              <a
-                className="hover:bg-gray-300 bg-gray-200 border-t-2 p-3 w-full text-xl text-left text-gray-600 font-semibold"
-                href
-              >
-                <i className="fa fa-cog text-gray-600 text-2xl pr-1 pt-1 float-right" />
-                Settings
-              </a>
+            <div
+              onClick={logout}
+              className="w-full h-screen antialiased flex flex-col hover:cursor-pointer"
+            >
               <a
                 className="hover:bg-gray-300 bg-gray-200 border-t-2 p-3 w-full text-xl text-left text-gray-600 font-semibold"
                 href
@@ -60,81 +86,11 @@ export default function Profile() {
           {/* End Navbar */}
           <div className="w-full md:w-3/4 lg:w-4/5 p-5 md:px-12 lg:24 h-full overflow-x-scroll antialiased">
             <Addpost />
-            <div className="mt-3 flex flex-col">
-              <div className="bg-white mt-3">
-                <img
-                  className="border rounded-t-lg shadow-lg "
-                  src="https://images.unsplash.com/photo-1572817519612-d8fadd929b00?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80"
-                />
-                <div className="bg-white border shadow p-5 text-xl text-gray-700 font-semibold">
-                  A Pretty Cool photo from the mountains. Image credit to
-                  @danielmirlea on Unsplash.
-                </div>
-                <div className="bg-white p-1 border shadow flex flex-row flex-wrap">
-                  <div className="w-1/3 hover:bg-gray-200 text-center text-xl text-gray-700 font-semibold">
-                    Like
-                  </div>
-                  <div className="w-1/3 hover:bg-gray-200 border-l-4 border-r- text-center text-xl text-gray-700 font-semibold">
-                    Share
-                  </div>
-                  <div className="w-1/3 hover:bg-gray-200 border-l-4 text-center text-xl text-gray-700 font-semibold">
-                    Comment
-                  </div>
-                </div>
-                <div className="bg-white border-4 bg-gray-300 border-white rounded-b-lg shadow p-5 text-xl text-gray-700 content-center font-semibold flex flex-row flex-wrap">
-                  <div className="w-full">
-                    <div className="w-full text-left text-xl text-gray-600">
-                      @Some Person
-                    </div>
-                    A Pretty Cool photo from the mountains. Image credit to
-                    @danielmirlea on Unsplash. A Pretty Cool photo from the
-                    mountains. Image credit to @danielmirlea on Unsplash.
-                  </div>
-                </div>
-              </div>
-              <div className="bg-white mt-3">
-                <img
-                  className="border rounded-t-lg shadow-lg "
-                  src="https://images.unsplash.com/photo-1572817519612-d8fadd929b00?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80"
-                />
-                <div className="bg-white border shadow p-5 text-xl text-gray-700 font-semibold">
-                  A Pretty Cool photo from the mountains. Image credit to
-                  @danielmirlea on Unsplash.
-                </div>
-                <div className="bg-white p-1 rounded-b-lg border shadow flex flex-row flex-wrap">
-                  <div className="w-1/3 hover:bg-gray-200 text-center text-xl text-gray-700 font-semibold">
-                    Like
-                  </div>
-                  <div className="w-1/3 hover:bg-gray-200 border-l-4 border-r- text-center text-xl text-gray-700 font-semibold">
-                    Share
-                  </div>
-                  <div className="w-1/3 hover:bg-gray-200 border-l-4 text-center text-xl text-gray-700 font-semibold">
-                    Comment
-                  </div>
-                </div>
-              </div>
-              <div className="bg-white mt-3">
-                <img
-                  className="border rounded-t-lg shadow-lg "
-                  src="https://images.unsplash.com/photo-1572817519612-d8fadd929b00?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80"
-                />
-                <div className="bg-white border shadow p-5 text-xl text-gray-700 font-semibold">
-                  A Pretty Cool photo from the mountains. Image credit to
-                  @danielmirlea on Unsplash.
-                </div>
-                <div className="bg-white p-1 rounded-b-lg border shadow flex flex-row flex-wrap">
-                  <div className="w-1/3 hover:bg-gray-200 text-center text-xl text-gray-700 font-semibold">
-                    Like
-                  </div>
-                  <div className="w-1/3 hover:bg-gray-200 border-l-4 border-r- text-center text-xl text-gray-700 font-semibold">
-                    Share
-                  </div>
-                  <div className="w-1/3 hover:bg-gray-200 border-l-4 text-center text-xl text-gray-700 font-semibold">
-                    Comment
-                  </div>
-                </div>
-              </div>
-            </div>
+            {isLoading ? (
+              <Loading />
+            ) : (
+              <Card details={true} posts={data.data.posts} />
+            )}
           </div>
         </div>
       </div>

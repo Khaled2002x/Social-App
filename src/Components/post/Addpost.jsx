@@ -5,6 +5,7 @@ import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdInsertPhoto } from "react-icons/md";
 import Loading from "./spinner";
+import { toast } from "react-toastify";
 
 export default function Addpost() {
   const { register, reset, handleSubmit } = useForm({});
@@ -29,13 +30,23 @@ export default function Addpost() {
     return data;
   }
   const queryclient = useQueryClient();
-  const { mutate, isPending, isSuccess } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: SendAddPost,
-    onSuccess: () => {
+    onSuccess: (data) => {
       reset();
       queryclient.invalidateQueries({
         queryKey: ["post"],
       });
+      queryclient.invalidateQueries({
+        queryKey: ["postId"],
+      });
+      queryclient.invalidateQueries({
+        queryKey: ["userpost"],
+      });
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
   function addPost(dataform) {
@@ -50,7 +61,6 @@ export default function Addpost() {
 
   return (
     <>
-      {isPending && <Loading />}
       <div className=" z-100  p-5 w-full md:w-1/2 m-auto">
         {/* component */}
 
@@ -65,7 +75,7 @@ export default function Addpost() {
               {...register("body")}
               className=""
               spellCheck="false"
-              placeholder="What is in your mind"
+              placeholder="What is in your mind?"
               type="text"
             />
             <input type="file" hidden onChange={handelimage} ref={Inputfile} />
@@ -81,12 +91,13 @@ export default function Addpost() {
 
             {/* buttons */}
             <div className="buttons m-3 justify-end flex">
-              <button
+              <Button
+                isLoading={isPending}
                 type="submit"
                 className="btn border border-indigo-500 p-1 px-4 font-semibold cursor-pointer text-gray-200 ml-2 bg-indigo-500"
               >
                 Post
-              </button>
+              </Button>
             </div>
           </form>
         </div>

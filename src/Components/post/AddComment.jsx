@@ -3,9 +3,11 @@ import { useState } from "react";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { MdInsertPhoto } from "react-icons/md";
-import { Input } from "@heroui/react";
+import { Button, Input } from "@heroui/react";
 import { IoMdSend } from "react-icons/io";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import Loading from "./spinner";
 export default function AddComment({ post }) {
   const [commentImage, SetCommentImage] = useState(null);
 
@@ -39,9 +41,9 @@ export default function AddComment({ post }) {
     SetCommentImage(e.target.files[0]);
   }
   const queryRefresh = useQueryClient();
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: SendData,
-    onSuccess: () => {
+    onSuccess: (data) => {
       reset();
       queryRefresh.invalidateQueries({
         queryKey: ["comment"],
@@ -49,9 +51,16 @@ export default function AddComment({ post }) {
       queryRefresh.invalidateQueries({
         queryKey: ["post"],
       });
+      queryRefresh.invalidateQueries({
+        queryKey: ["userpost"],
+      });
+      queryRefresh.invalidateQueries({
+        queryKey: ["postId"],
+      });
+      toast.success(data.message);
     },
     onError: (err) => {
-      console.log(err.message);
+      toast.error(err.message);
     },
   });
   return (
@@ -72,9 +81,9 @@ export default function AddComment({ post }) {
           onClick={() => Inputfile.current.click()}
           className="size-9"
         />
-        <button className="  text-sky-400" type="submit">
+        <Button isLoading={isPending} className="  text-sky-400" type="submit">
           <IoMdSend className="text-3xl" />
-        </button>
+        </Button>
       </form>
     </div>
   );

@@ -5,8 +5,9 @@ import src from "../../assets/images/user.jpeg";
 import useFetch from "./useFetch";
 import { Context } from "../../Context";
 import Modeladdcomment from "./Modeladdcomment";
+import { Button } from "@heroui/react";
 export default function CommentDetails({ post, details }) {
-  const { mutate } = useDeleteComment();
+  const { mutate, isPending } = useDeleteComment();
   const { User } = useContext(Context);
   const user_id = User.data.user.id;
 
@@ -35,14 +36,15 @@ export default function CommentDetails({ post, details }) {
           <div className="DeleteComment ms-auto flex items-center gap-2">
             {user_id === comment.commentCreator._id && (
               <>
-                <button
+                <Button
+                  isLoading={isPending}
                   onClick={() =>
                     mutate({ postId: post._id, commentId: comment._id })
                   }
                   className="bg-red-600 active:scale-75 duration-75 rounded-2xl text-white p-2"
                 >
                   Delete
-                </button>
+                </Button>
                 <Modeladdcomment postid={post._id} comment={comment} />
               </>
             )}
